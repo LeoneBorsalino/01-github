@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<title>RUTA10</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="Equipamiento y señalización para rutas y obra vial — sin ser fabricante ni taller: conos, balizas, EPP vial, topografía y demarcación." />
+
+<style>
+  /* ---------------------------------------------------------
+     TOKENS
+     Light = concrete / road-marking palette. Dark = night obra.
+  --------------------------------------------------------- */
+  :root{
+    --bg:#f5f6f1;
+    --surface:#ffffff;
+    --surface-2:#ececE3;
+    --ink:#181a13;
+    --ink-soft:#5a5e4e;
+    --ink-faint:#8b8f7c;
+    --line:#dcddce;
+    --accent:#ff5a1f;
+    --accent-ink:#ffffff;
+    --accent-2:#f2b705;
+    --focus:#1f6feb;
+    --shadow: 0 1px 2px rgba(24,26,19,.06), 0 8px 24px -12px rgba(24,26,19,.18);
+
+    --font-display: ui-sans-serif, "Helvetica Neue", Arial, "Segoe UI", sans-serif;
+    --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, "Liberation Mono", monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#121309;
+      --surface:#1b1d13;
+      --surface-2:#23261a;
+      --ink:#f1f0e6;
+      --ink-soft:#b9bba7;
+      --ink-faint:#7d8070;
+      --line:#33362a;
+      --accent:#ff6a33;
+      --accent-ink:#181a13;
+      --accent-2:#ffce33;
+      --focus:#6ea8ff;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 32px -14px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#121309;
+    --surface:#1b1d13;
+    --surface-2:#23261a;
+    --ink:#f1f0e6;
+    --ink-soft:#b9bba7;
+    --ink-faint:#7d8070;
+    --line:#33362a;
+    --accent:#ff6a33;
+    --accent-ink:#181a13;
+    --accent-2:#ffce33;
+    --focus:#6ea8ff;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 32px -14px rgba(0,0,0,.6);
+  }
+
+  *,*::before,*::after{ box-sizing:border-box; }
+  html{ -webkit-text-size-adjust:100%; }
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--font-body);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  img,svg{ display:block; max-width:100%; }
+  a{ color:inherit; }
+  h1,h2,h3{ font-family:var(--font-display); text-wrap:balance; margin:0; }
+  p{ margin:0; }
+  ul{ margin:0; padding:0; list-style:none; }
+  :focus-visible{ outline:3px solid var(--focus); outline-offset:2px; }
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:.001ms !important; transition-duration:.001ms !important; scroll-behavior:auto !important; }
+  }
+
+  .wrap{ max-width:1180px; margin-inline:auto; padding-inline:20px; }
+
+  /* ---------------- utility bar ---------------- */
+  .utility{
+    background:var(--ink);
+    color:var(--bg);
+  }
+  :root[data-theme="dark"] .utility, @media (prefers-color-scheme: dark){ }
+  .utility .wrap{
+    display:flex; justify-content:space-between; align-items:center;
+    gap:12px; padding-block:8px;
+    font-family:var(--font-mono); font-size:.72rem; letter-spacing:.02em;
+    flex-wrap:wrap;
+  }
+  .utility a{ text-decoration:none; }
+  .utility a:hover{ text-decoration:underline; }
+  .utility .sep{ opacity:.45; padding-inline:2px; }
+
+  /* ---------------- header ---------------- */
+  header.site{
+    position:sticky; top:0; z-index:40;
+    background:color-mix(in srgb, var(--surface) 92%, transparent);
+    backdrop-filter:saturate(140%) blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .site-nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding-block:14px; gap:16px;
+  }
+  .logo{
+    display:flex; align-items:center; gap:10px;
+    font-family:var(--font-display); font-weight:900;
+    font-size:1.35rem; letter-spacing:-.01em; text-decoration:none;
+    color:var(--ink);
+  }
+  .logo .mark{
+    width:34px; height:34px; border-radius:8px;
+    background:var(--accent); color:var(--accent-ink);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-mono); font-weight:700; font-size:.85rem;
+    flex:none;
+  }
+  .logo .tag{
+    display:block; font-family:var(--font-mono); font-weight:400;
+    font-size:.62rem; letter-spacing:.08em; color:var(--ink-faint);
+    text-transform:uppercase; margin-top:1px;
+  }
+  nav.primary{ display:flex; gap:26px; }
+  nav.primary a{
+    text-decoration:none; font-size:.88rem; font-weight:600;
+    color:var(--ink-soft); white-space:nowrap;
+  }
+  nav.primary a:hover{ color:var(--accent); }
+  .header-cta{ display:flex; align-items:center; gap:10px; }
+  .btn{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:var(--font-body); font-weight:700; font-size:.85rem;
+    padding:10px 18px; border-radius:9px; border:1px solid transparent;
+    text-decoration:none; cursor:pointer; white-space:nowrap;
+  }
+  .btn-accent{ background:var(--accent); color:var(--accent-ink); }
+  .btn-accent:hover{ filter:brightness(1.06); }
+  .btn-line{ border-color:var(--line); color:var(--ink); background:transparent; }
+  .btn-line:hover{ border-color:var(--ink-faint); }
+  .nav-toggle{ display:none; }
+
+  /* ---------------- hero ---------------- */
+  .hero{
+    position:relative; overflow:hidden;
+    border-bottom:1px solid var(--line);
+    background:
+      repeating-linear-gradient(180deg, transparent 0 0),
+      var(--surface);
+  }
+  .hero .wrap{
+    display:grid; grid-template-columns:1.05fr .95fr; gap:48px;
+    align-items:center; padding-block:68px;
+  }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:var(--font-mono); font-size:.72rem; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--ink-soft);
+    background:var(--surface-2); border:1px solid var(--line);
+    padding:6px 12px; border-radius:100px; margin-bottom:20px;
+  }
+  .eyebrow .dot{ width:7px; height:7px; border-radius:50%; background:var(--accent); }
+  .hero h1{
+    font-size:clamp(2.1rem, 4.4vw, 3.4rem);
+    font-weight:900; letter-spacing:-.015em; line-height:1.04;
+  }
+  .hero h1 em{ font-style:normal; color:var(--accent); }
+  .hero p.lead{
+    margin-top:18px; max-width:46ch; color:var(--ink-soft); font-size:1.08rem;
+  }
+  .hero .cta-row{ display:flex; gap:12px; margin-top:30px; flex-wrap:wrap; }
+  .hero .btn{ padding:13px 22px; font-size:.92rem; }
+  .hero-stats{ display:flex; gap:28px; margin-top:40px; flex-wrap:wrap; }
+  .hero-stats div{ font-family:var(--font-mono); }
+  .hero-stats strong{ display:block; font-size:1.5rem; font-weight:700; color:var(--ink); }
+  .hero-stats span{ font-size:.7rem; color:var(--ink-faint); letter-spacing:.03em; text-transform:uppercase; }
+
+  .hero-art{ position:relative; }
+  .road-card{
+    position:relative; border-radius:20px; overflow:hidden;
+    background:linear-gradient(160deg, #24261a, #14150d);
+    aspect-ratio:4/3.1; box-shadow:var(--shadow);
+    border:1px solid var(--line);
+  }
+  :root[data-theme="light"] .road-card, .road-card{ }
+  .road-card svg{ width:100%; height:100%; }
+
+  /* ---------------- marquee divider (route line) ---------------- */
+  .route-divider{
+    height:34px; display:flex; align-items:center; overflow:hidden;
+    background:var(--ink); border-block:1px solid var(--line);
+  }
+  .route-divider .track{
+    display:flex; gap:26px; white-space:nowrap;
+    font-family:var(--font-mono); font-size:.7rem; letter-spacing:.12em;
+    color:var(--bg); opacity:.55; text-transform:uppercase;
+    padding-inline:20px;
+  }
+
+  /* ---------------- section shell ---------------- */
+  section{ padding-block:64px; border-bottom:1px solid var(--line); }
+  section.alt{ background:var(--surface-2); }
+  .section-head{
+    display:flex; justify-content:space-between; align-items:flex-end;
+    gap:24px; margin-bottom:36px; flex-wrap:wrap;
+  }
+  .section-head .km{
+    font-family:var(--font-mono); font-size:.72rem; color:var(--accent);
+    letter-spacing:.1em; margin-bottom:8px; display:block; font-weight:700;
+  }
+  .section-head h2{ font-size:clamp(1.5rem,2.6vw,2.05rem); letter-spacing:-.01em; }
+  .section-head p{ color:var(--ink-soft); max-width:52ch; margin-top:8px; }
+
+  /* value props */
+  .props{ display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:14px; overflow:hidden; }
+  .props div{ background:var(--surface); padding:22px 20px; }
+  .props .ic{ width:30px; height:30px; color:var(--accent); margin-bottom:12px; }
+  .props strong{ display:block; font-size:.92rem; margin-bottom:4px; }
+  .props span{ font-size:.82rem; color:var(--ink-soft); }
+
+  /* product catalog */
+  .cat-block + .cat-block{ margin-top:52px; }
+  .cat-head{ display:flex; align-items:center; gap:14px; margin-bottom:18px; }
+  .cat-head .ic{
+    width:44px; height:44px; flex:none; border-radius:11px;
+    background:var(--surface); border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center; color:var(--accent);
+  }
+  .cat-head h3{ font-size:1.18rem; letter-spacing:-.005em; }
+  .cat-head .count{ margin-left:auto; font-family:var(--font-mono); font-size:.72rem; color:var(--ink-faint); }
+
+  .product-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:18px; }
+  .product-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:16px;
+    padding:22px; display:flex; flex-direction:column; gap:14px;
+    box-shadow:var(--shadow);
+  }
+  .product-card .thumb{
+    aspect-ratio:16/10; border-radius:10px; background:var(--surface-2);
+    display:flex; align-items:center; justify-content:center; color:var(--ink-faint);
+    border:1px dashed var(--line);
+  }
+  .product-card .thumb svg{ width:42%; height:42%; color:var(--accent); }
+  .product-card h4{ font-size:1.02rem; font-weight:700; letter-spacing:-.005em; }
+  .product-card .spec{ font-size:.82rem; color:var(--ink-soft); }
+  .price-row{ display:flex; align-items:baseline; gap:10px; margin-top:auto; flex-wrap:wrap; }
+  .price-row .now{ font-family:var(--font-mono); font-size:1.28rem; font-weight:700; }
+  .price-row .base{ font-family:var(--font-mono); font-size:.8rem; color:var(--ink-faint); text-decoration:line-through; }
+  .badge{
+    font-family:var(--font-mono); font-size:.65rem; letter-spacing:.04em;
+    background:var(--accent-2); color:#221a02; padding:3px 8px; border-radius:5px;
+    font-weight:700; text-transform:uppercase;
+  }
+  .product-card .cta{ display:flex; gap:8px; }
+  .product-card .btn{ flex:1; justify-content:center; padding:10px 14px; font-size:.82rem; }
+  .ref-note{ font-size:.72rem; color:var(--ink-faint); }
+  .ref-note a{ color:var(--ink-soft); text-decoration:underline; text-decoration-color:var(--line); }
+
+  /* how it works */
+  .steps{ display:grid; grid-template-columns:repeat(4,1fr); gap:18px; counter-reset:step; }
+  .step{ background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:22px 20px; position:relative; }
+  .step .num{
+    font-family:var(--font-mono); font-weight:700; font-size:.75rem;
+    color:var(--accent); margin-bottom:14px; display:block;
+  }
+  .step h4{ font-size:.98rem; margin-bottom:6px; }
+  .step p{ font-size:.84rem; color:var(--ink-soft); }
+  .step:not(:last-child)::after{
+    content:""; position:absolute; top:50%; right:-19px; width:18px; height:1px;
+    background:repeating-linear-gradient(90deg, var(--ink-faint) 0 6px, transparent 6px 10px);
+    display:none;
+  }
+  @media (min-width:860px){ .step:not(:last-child)::after{ display:block; } }
+
+  /* disclaimer band */
+  .notice{
+    background:var(--surface); border:1px solid var(--line); border-left:4px solid var(--accent);
+    border-radius:10px; padding:18px 20px; font-size:.85rem; color:var(--ink-soft);
+  }
+  .notice strong{ color:var(--ink); }
+
+  /* footer */
+  footer{ padding-block:52px 28px; }
+  .foot-grid{ display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:32px; margin-bottom:40px; }
+  .foot-grid h5{
+    font-family:var(--font-mono); font-size:.7rem; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--ink-faint); margin-bottom:14px; font-weight:700;
+  }
+  .foot-grid li{ margin-bottom:9px; font-size:.86rem; }
+  .foot-grid a{ text-decoration:none; color:var(--ink-soft); }
+  .foot-grid a:hover{ color:var(--accent); }
+  .foot-bottom{
+    display:flex; justify-content:space-between; align-items:center;
+    padding-top:22px; border-top:1px solid var(--line); flex-wrap:wrap; gap:12px;
+    font-size:.76rem; color:var(--ink-faint);
+  }
+  .trust-row{ display:flex; gap:10px; flex-wrap:wrap; }
+  .trust-row span{
+    font-family:var(--font-mono); font-size:.68rem; border:1px solid var(--line);
+    padding:5px 10px; border-radius:100px; color:var(--ink-soft);
+  }
+
+  /* floating whatsapp */
+  .wa-float{
+    position:fixed; right:20px; bottom:20px; z-index:50;
+    width:56px; height:56px; border-radius:50%;
+    background:#25D366; color:#fff; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 10px 26px -8px rgba(0,0,0,.4); text-decoration:none;
+  }
+  .wa-float svg{ width:28px; height:28px; }
+  .wa-float:hover{ filter:brightness(1.05); }
+
+  @media (max-width:860px){
+    nav.primary{ display:none; }
+    .hero .wrap{ grid-template-columns:1fr; padding-block:44px; }
+    .props{ grid-template-columns:1fr 1fr; }
+    .product-grid{ grid-template-columns:1fr; }
+    .steps{ grid-template-columns:1fr 1fr; }
+    .foot-grid{ grid-template-columns:1fr 1fr; }
+  }
+  @media (max-width:520px){
+    .steps{ grid-template-columns:1fr; }
+    .foot-grid{ grid-template-columns:1fr; }
+    .utility .wrap{ font-size:.66rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     UTILITY BAR
+============================================================ -->
+<div class="utility">
+  <div class="wrap">
+    <div>Envíos a todo el país <span class="sep">·</span> Precios en pesos <span class="sep">·</span> Sin stock propio: pedido a demanda</div>
+    <div><a href="mailto:hola@ruta10.com.ar">hola@ruta10.com.ar</a><span class="sep">·</span><a href="#contacto">Consultar por WhatsApp</a></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     HEADER
+============================================================ -->
+<header class="site">
+  <div class="wrap site-nav">
+    <a href="#top" class="logo">
+      <span class="mark">R10</span>
+      <span>RUTA10<span class="tag">Equipamiento vial</span></span>
+    </a>
+    <nav class="primary">
+      <a href="#senalizacion">Señalización</a>
+      <a href="#balizas">Balizas</a>
+      <a href="#seguridad">Seguridad vial</a>
+      <a href="#topografia">Topografía</a>
+      <a href="#demarcacion">Demarcación</a>
+      <a href="#como-funciona">Cómo funciona</a>
+    </nav>
+    <div class="header-cta">
+      <a class="btn btn-accent" href="#contacto" id="wa-header">WhatsApp</a>
+    </div>
+  </div>
+</header>
+
+<!-- ============================================================
+     HERO
+============================================================ -->
+<section class="hero" id="top" style="border-bottom:1px solid var(--line); padding-block:0;">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow"><span class="dot"></span>Nuevo en Argentina · catálogo en expansión</span>
+      <h1>Equipamiento vial que <em>no</em> es maquinaria ni repuestos.</h1>
+      <p class="lead">Señalización, balizamiento, seguridad, topografía y demarcación para empresas viales, contratistas y municipios. Pedís por WhatsApp, confirmamos precio y disponibilidad, y el proveedor despacha directo a tu obra.</p>
+      <div class="cta-row">
+        <a class="btn btn-accent" href="#senalizacion">Ver catálogo</a>
+        <a class="btn btn-line" href="#como-funciona">Cómo funciona</a>
+      </div>
+      <div class="hero-stats">
+        <div><strong>5</strong><span>Líneas de producto</span></div>
+        <div><strong>+10%</strong><span>Sobre precio oficial / ML</span></div>
+        <div><strong>0</strong><span>Stock propio inmovilizado</span></div>
+      </div>
+    </div>
+    <div class="hero-art">
+      <div class="road-card">
+        <svg viewBox="0 0 400 310" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect width="400" height="310" fill="none"/>
+          <!-- sky -->
+          <rect x="0" y="0" width="400" height="150" fill="#1c2013"/>
+          <!-- road -->
+          <path d="M0 310 L140 150 L260 150 L400 310 Z" fill="#2b2d20"/>
+          <path d="M180 150 L220 150 L400 310 L340 310 Z" fill="#33362a" opacity=".5"/>
+          <!-- centerline dashes -->
+          <g stroke="#f2b705" stroke-width="7" stroke-linecap="round">
+            <line x1="198" y1="210" x2="192" y2="240"/>
+            <line x1="188" y1="250" x2="180" y2="285"/>
+          </g>
+          <line x1="203" y1="150" x2="203" y2="195" stroke="#f2b705" stroke-width="5" stroke-linecap="round"/>
+          <!-- cones -->
+          <g>
+            <path d="M70 285 L86 235 L100 235 L116 285 Z" fill="#ff5a1f"/>
+            <rect x="64" y="285" width="58" height="9" rx="2" fill="#ff5a1f"/>
+            <rect x="78" y="252" width="30" height="8" fill="#f5f6f1"/>
+            <rect x="82" y="268" width="22" height="7" fill="#f5f6f1"/>
+          </g>
+          <g transform="translate(255,10)">
+            <path d="M70 285 L86 235 L100 235 L116 285 Z" fill="#ff5a1f"/>
+            <rect x="64" y="285" width="58" height="9" rx="2" fill="#ff5a1f"/>
+            <rect x="78" y="252" width="30" height="8" fill="#f5f6f1"/>
+            <rect x="82" y="268" width="22" height="7" fill="#f5f6f1"/>
+          </g>
+          <!-- beacon -->
+          <g transform="translate(178,55)">
+            <rect x="0" y="30" width="10" height="26" fill="#3a3d2c"/>
+            <circle cx="5" cy="18" r="17" fill="#f2b705"/>
+            <circle cx="5" cy="18" r="17" fill="#f2b705" opacity=".35">
+              <animate attributeName="r" values="17;27;17" dur="2.6s" repeatCount="indefinite"/>
+              <animate attributeName="opacity" values=".35;0;.35" dur="2.6s" repeatCount="indefinite"/>
+            </circle>
+          </g>
+          <!-- sign -->
+          <g transform="translate(300,80)">
+            <rect x="10" y="20" width="4" height="50" fill="#3a3d2c"/>
+            <rect x="-14" y="0" width="40" height="40" rx="6" fill="#f5f6f1"/>
+            <path d="M-6 28 L6 4 L18 28 Z" fill="none" stroke="#ff5a1f" stroke-width="4"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="route-divider" aria-hidden="true">
+  <div class="track">
+    <span>SEÑALIZACIÓN</span><span>BALIZAMIENTO</span><span>SEGURIDAD VIAL</span><span>TOPOGRAFÍA</span><span>DEMARCACIÓN</span>
+    <span>SEÑALIZACIÓN</span><span>BALIZAMIENTO</span><span>SEGURIDAD VIAL</span><span>TOPOGRAFÍA</span><span>DEMARCACIÓN</span>
+  </div>
+</div>
+
+<!-- ============================================================
+     VALUE PROPS
+============================================================ -->
+<section style="padding-block:44px;">
+  <div class="wrap">
+    <div class="props">
+      <div>
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+        <strong>No competimos con maquinaria</strong>
+        <span>Nada de equipos viales ni repuestos: eso ya lo cubre tu proveedor habitual.</span>
+      </div>
+      <div>
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v6M12 16v6M4.9 4.9l4.2 4.2M14.9 14.9l4.2 4.2M2 12h6M16 12h6M4.9 19.1l4.2-4.2M14.9 9.1l4.2-4.2"/></svg>
+        <strong>Precio referenciado</strong>
+        <span>Base según sitios oficiales y Mercado Libre, más 10% de gestión y envío.</span>
+      </div>
+      <div>
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <strong>Pedís por WhatsApp</strong>
+        <span>Confirmamos stock del proveedor y precio del día antes de cerrar la venta.</span>
+      </div>
+      <div>
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7z"/><circle cx="5.5" cy="18.5" r="2"/><circle cx="18.5" cy="18.5" r="2"/></svg>
+        <strong>Despacho directo</strong>
+        <span>El proveedor envía a tu obra o depósito — vos no manejás stock.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     CATALOG
+============================================================ -->
+<section class="alt">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="km">CATÁLOGO · 5 LÍNEAS</span>
+        <h2>Los 5 productos que arrancan el catálogo</h2>
+        <p>Elegidos por rotación en Mercado Libre y demanda de municipios/contratistas viales — sin pisar equipos ni repuestos de maquinaria.</p>
+      </div>
+    </div>
+
+    <!-- 1. SEÑALIZACIÓN -->
+    <div class="cat-block" id="senalizacion">
+      <div class="cat-head">
+        <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2L20 20H4L12 2Z"/><path d="M12 9v5"/><circle cx="12" cy="17" r=".6" fill="currentColor"/></svg></div>
+        <h3>1 · Señalización vial</h3>
+        <span class="count">KM 01</span>
+      </div>
+      <div class="product-grid">
+        <article class="product-card">
+          <div class="thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2L20 20H4L12 2Z"/><path d="M9 20l1.5-9h3L15 20"/></svg></div>
+          <h4>Cono PVC reflectante 70cm</h4>
+          <span class="spec">Naranja fluo, base flexible, doble banda reflectiva</span>
+          <div class="price-row">
+            <span class="now">$16.500</span>
+            <span class="base">$15.000</span>
+            <span class="badge">+10%</span>
+          </div>
+          <span class="ref-note">Ref. base: promedio Conoflex / Mercado Libre</span>
+          <div class="cta"><a class="btn btn-accent" href="#contacto">Consultar</a></div>
+        </article>
+        <article class="product-card">
+          <div class="thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 20 10 6 14 6 20 20"/><path d="M7.2 13h9.6"/><path d="M4 20h16"/></svg></div>
+          <h4>Valla peatonal plegable</h4>
+          <span class="spec">Caballete metálico 2m, franjas reflectantes</span>
+          <div class="price-row">
+            <span class="now">$49.500</span>
+            <span class="base">$45.000</span>
+            <span class="badge">+10%</span>
+          </div>
+          <span class="ref-note">Ref. base: promedio proveedores de señalización</span>
+          <div class="cta"><a class="btn btn-accent" href="#contacto">Consultar</a></div>
+        </article>
+      </div>
+    </div>
+
+    <!-- 2. BALIZAS -->
+    <div class="cat-block" id="balizas">
+      <div class="cat-head">
+        <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="9" r="6"/><path d="M12 15v6M9 21h6"/></svg></div>
+        <h3>2 · Balizas y luces de obra</h3>
+        <span class="count">KM 02</span>
+      </div>
+      <div class="product-grid">
+        <article class="product-card">
+          <div class="thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="9" r="5"/><path d="M12 14v7"/></svg></div>
+          <h4>Baliza solar LED intermitente</h4>
+          <span class="spec">Autonomía nocturna, montaje magnético para cono/valla</span>
+          <div class="price-row">
+            <span class="now">$9.350</span>
+            <span class="base">$8.500</span>
+            <span class="badge">+10%</span>
+          </div>
+          <span class="ref-note">Ref. base: promedio Mercado Libre</span>
+          <div class="cta"><a class="btn btn-accent" href="#contacto">Consultar</a></div>
+        </article>
+        <article class="product-card">
+          <div class="thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v3M12 3l-4 6h8l-4-6Z"/><rect x="6" y="9" width="12" height="10" rx="2"/></svg></div>
+          <h4>Baliza giratoria magnética 12V</h4>
+          <span class="spec">Ámbar, base imantada para techo de camioneta de apoyo</span>
+          <div class="price-row">
+            <span class="now">$35.200</span>
+            <span class="base">$32.000</span>
+            <span class="badge">+10%</span>
+          </div>
+          <span class="ref-note">Ref. base: promedio Mercado Libre</span>
+          <div class="cta"><a class="btn btn-accent" href="#contacto">Consultar</a></div>
+        </article>
+      </div>
+    </div>
+
+    <!-- 3. SEGURIDAD VIAL / EPP -->
+    <div class="cat-block" id="seguridad">
+      <div class="cat-head">
+        <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l8 3v6c0 5-3.5 8.5-8 11-4.5-2.5-8-6-8-11V5l8-3Z"/></svg></div>
+        <h3>3 · Seguridad vial (EPP)</h3>
+        <span class="count">KM 03</span>
+      </div>
+      <div class="product-grid">
+        <article class="product-card">
+          <div class="thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 15a8 8 0 0 1 16 0"/><path d="M3 15h18v2a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/></svg></div>
+          <h4>Kit chaleco + casco + botines</h4>
+          <span class="spec">Chaleco clase 2, casco dieléctrico, botín con puntera</span>
+          <div class="price-row">
+            <span class="now">$30.800</span>
+            <span class="base">$28.000</span>
+            <span class="badge">+10%</span>
+          </div>
+          <span class="ref-note">Ref. base: promedio Mercado Libre (kit)</span>
+          <div class="cta"><a class="btn btn-accent" href="#contacto">Consultar</a></div>
+        </article>
+        <article class="product-card">
+          <div class="thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 4h12l-2 16H8L6 4Z"/></svg></div>
+          <h4>Chaleco reflectante clase 2</h4>
+          <span class="spec">Cierre rápido, dos bandas reflectivas 5cm</span>
+          <div class="price-row">
+            <span class="now">$9.900</span>
+            <span class="base">$9.000</span>
+            <span class="badge">+10%</span>
+          </div>
+          <span class="ref-note">Ref. base: promedio Mercado Libre</span>
+          <div class="cta"><a class="btn btn-accent" href="#contacto">Consultar</a></div>
+        </article>
+      </div>
+    </div>
+
+    <!-- 4. TOPOGRAFÍA -->
+    <div class="cat-block" id="topografia">
+      <div class="cat-head">
+        <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/></svg></div>
+        <h3>4 · Topografía y medición</h3>
+        <span class="count">KM 04</span>
+      </div>
+      <div class="product-grid">
+        <article class="product-card">
+          <div class="thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="7" y="4" width="10" height="16" rx="2"/><path d="M12 4v16"/></svg></div>
+          <h4>Nivel láser autonivelante</h4>
+          <span class="spec">Rotativo, alcance de trabajo con receptor</span>
+          <div class="price-row">
+            <span class="now">$198.000</span>
+            <span class="base">$180.000</span>
+            <span class="badge">+10%</span>
+          </div>
+          <span class="ref-note">Ref. base: promedio Mercado Libre</span>
+          <div class="cta"><a class="btn btn-accent" href="#contacto">Consultar</a></div>
+        </article>
+        <article class="product-card">
+          <div class="thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2v20M8 6h8M8 12h8M8 18h8"/></svg></div>
+          <h4>Mira telescópica topográfica 5m</h4>
+          <span class="spec">Graduada, para nivel óptico o láser</span>
+          <div class="price-row">
+            <span class="now">$38.500</span>
+            <span class="base">$35.000</span>
+            <span class="badge">+10%</span>
+          </div>
+          <span class="ref-note">Ref. base: promedio Mercado Libre</span>
+          <div class="cta"><a class="btn btn-accent" href="#contacto">Consultar</a></div>
+        </article>
+      </div>
+    </div>
+
+    <!-- 5. DEMARCACIÓN -->
+    <div class="cat-block" id="demarcacion">
+      <div class="cat-head">
+        <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 12h4M12 12h4M20 12"/><circle cx="20" cy="12" r="1.4" fill="currentColor" stroke="none"/></svg></div>
+        <h3>5 · Demarcación vial</h3>
+        <span class="count">KM 05</span>
+      </div>
+      <div class="product-grid">
+        <article class="product-card">
+          <div class="thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 8h12l-1.4 11.2a1 1 0 0 1-1 .8H8.4a1 1 0 0 1-1-.8L6 8Z"/><path d="M4 8h16"/><path d="M9 8V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V8"/></svg></div>
+          <h4>Kit pintura vial alto tránsito 20L</h4>
+          <span class="spec">Secado rápido, blanco o amarillo reflectante</span>
+          <div class="price-row">
+            <span class="now">$71.500</span>
+            <span class="base">$65.000</span>
+            <span class="badge">+10%</span>
+          </div>
+          <span class="ref-note">Ref. base: promedio fabricantes / Mercado Libre</span>
+          <div class="cta"><a class="btn btn-accent" href="#contacto">Consultar</a></div>
+        </article>
+        <article class="product-card">
+          <div class="thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 12h18" stroke-dasharray="4 3"/></svg></div>
+          <h4>Cinta reflectante adhesiva 50m</h4>
+          <span class="spec">Para obra y balizamiento temporario</span>
+          <div class="price-row">
+            <span class="now">$13.200</span>
+            <span class="base">$12.000</span>
+            <span class="badge">+10%</span>
+          </div>
+          <span class="ref-note">Ref. base: promedio Mercado Libre</span>
+          <div class="cta"><a class="btn btn-accent" href="#contacto">Consultar</a></div>
+        </article>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================
+     HOW IT WORKS
+============================================================ -->
+<section id="como-funciona">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="km">SIN STOCK PROPIO</span>
+        <h2>Cómo funciona una compra</h2>
+        <p>Modelo dropshipping: el pedido se confirma antes de comprarle al proveedor, así el precio siempre está actualizado.</p>
+      </div>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <span class="num">01</span>
+        <h4>Consultás</h4>
+        <p>Elegís el producto y escribís por WhatsApp con cantidad y localidad de entrega.</p>
+      </div>
+      <div class="step">
+        <span class="num">02</span>
+        <h4>Confirmamos precio</h4>
+        <p>Chequeamos el valor oficial / Mercado Libre del día y cerramos el precio final (+10%).</p>
+      </div>
+      <div class="step">
+        <span class="num">03</span>
+        <h4>Coordinamos pago</h4>
+        <p>Transferencia o el medio que acordemos. Sin pago, no se genera el pedido al proveedor.</p>
+      </div>
+      <div class="step">
+        <span class="num">04</span>
+        <h4>Despacho directo</h4>
+        <p>El proveedor envía a tu obra o depósito. Te pasamos seguimiento del envío.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     NOTICE / DISCLAIMER
+============================================================ -->
+<section class="alt">
+  <div class="wrap">
+    <div class="notice">
+      <strong>Nota sobre precios:</strong> los valores publicados son de referencia, calculados sobre precios promedio observados en sitios oficiales y Mercado Libre al momento de cargar el catálogo, más el 10% de gestión y envío. El precio final se confirma por WhatsApp antes de cerrar cada pedido, porque el proveedor puede variarlo sin aviso. RUTA10 es un emprendimiento independiente — no vende maquinaria vial ni repuestos, y no está afiliado a fabricantes ni talleres oficiales.
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     FOOTER / CONTACT
+============================================================ -->
+<footer id="contacto">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a href="#top" class="logo" style="margin-bottom:12px;">
+          <span class="mark">R10</span>
+          <span>RUTA10</span>
+        </a>
+        <p style="color:var(--ink-soft); font-size:.86rem; max-width:34ch; margin-top:10px;">
+          Señalización, balizamiento, seguridad, topografía y demarcación para rutas y obra vial. Pedido a demanda, sin stock propio.
+        </p>
+      </div>
+      <div>
+        <h5>Catálogo</h5>
+        <ul>
+          <li><a href="#senalizacion">Señalización</a></li>
+          <li><a href="#balizas">Balizas</a></li>
+          <li><a href="#seguridad">Seguridad vial</a></li>
+          <li><a href="#topografia">Topografía</a></li>
+          <li><a href="#demarcacion">Demarcación</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Contacto</h5>
+        <ul>
+          <li><a href="#" id="wa-footer">WhatsApp: +54 9 11 0000-0000</a></li>
+          <li><a href="mailto:hola@ruta10.com.ar">hola@ruta10.com.ar</a></li>
+          <li><a href="#">Buenos Aires, Argentina</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Info</h5>
+        <ul>
+          <li><a href="#como-funciona">Cómo funciona</a></li>
+          <li><a href="#">Medios de pago</a></li>
+          <li><a href="#">Envíos</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 RUTA10 · Emprendimiento independiente, no afiliado a fabricantes ni talleres viales.</span>
+      <div class="trust-row">
+        <span>Precios en pesos</span>
+        <span>Envío a todo el país</span>
+        <span>Pedido a demanda</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<a class="wa-float" id="wa-float" href="#" aria-label="Escribinos por WhatsApp" target="_blank" rel="noopener">
+  <svg viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M16.02 3C9.4 3 4 8.4 4 15.02c0 2.35.65 4.55 1.78 6.43L4 29l7.73-1.75a12 12 0 0 0 4.29.8h.01c6.62 0 12.02-5.4 12.02-12.03C28.05 8.4 22.65 3 16.02 3Zm0 21.9h-.01a9.9 9.9 0 0 1-5.05-1.38l-.36-.21-4.24.96.94-4.15-.24-.36a9.86 9.86 0 0 1-1.53-5.24C5.53 9.5 10.24 4.9 16.02 4.9c5.77 0 10.48 4.6 10.48 10.12 0 5.53-4.7 10.12-10.48 10.12Zm5.66-7.4c-.31-.16-1.82-.9-2.1-1-.28-.1-.49-.16-.7.16-.2.31-.8 1-.98 1.2-.18.2-.36.23-.67.08-.31-.16-1.32-.49-2.51-1.55-.93-.83-1.56-1.85-1.74-2.16-.18-.31-.02-.48.14-.63.14-.14.31-.36.47-.55.16-.18.2-.31.31-.52.1-.2.05-.39-.03-.55-.08-.16-.7-1.7-.96-2.33-.25-.6-.5-.52-.7-.53-.18-.01-.39-.01-.6-.01-.2 0-.55.08-.83.39-.28.31-1.1 1.07-1.1 2.62 0 1.54 1.13 3.03 1.28 3.24.16.2 2.22 3.39 5.38 4.75.75.32 1.34.51 1.8.66.76.24 1.44.2 1.99.13.61-.09 1.82-.75 2.08-1.46.26-.72.26-1.34.18-1.46-.08-.14-.28-.22-.6-.38Z"/></svg>
+</a>
+
+<script>
+  (function(){
+    // Single source of truth for the WhatsApp number — replace with the real one before going live.
+    var WHATSAPP_NUMBER = "5491100000000"; // formato: 54 9 + código de área + número, sin espacios ni signos
+    var DEFAULT_MSG = "Hola RUTA10! Quiero consultar por un producto del catálogo.";
+    var url = "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(DEFAULT_MSG);
+
+    ["wa-header", "wa-footer", "wa-float"].forEach(function(id){
+      var el = document.getElementById(id);
+      if (el) { el.setAttribute("href", url); el.setAttribute("target", "_blank"); el.setAttribute("rel", "noopener"); }
+    });
+
+  })();
+</script>
+</body>
+</html>
