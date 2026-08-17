@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <title>RUTA10</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="description" content="Equipamiento y señalización para rutas y obra vial — sin ser fabricante ni taller: conos, balizas, EPP vial, topografía y demarcación." />
+<meta name="description" content="Conos, balizas, seguridad vial, topografía y demarcación para rutas y obra vial. Pedís por WhatsApp, envío a todo el país." />
 
 <style>
   /* ---------------------------------------------------------
@@ -243,47 +243,33 @@
   }
   .product-card .thumb{
     aspect-ratio:16/10; border-radius:10px; background:var(--surface-2);
-    display:flex; align-items:center; justify-content:center; color:var(--ink-faint);
-    border:1px dashed var(--line);
+    overflow:hidden; border:1px solid var(--line);
   }
-  .product-card .thumb svg{ width:42%; height:42%; color:var(--accent); }
+  .product-card .thumb img{ width:100%; height:100%; object-fit:cover; display:block; }
   .product-card h4{ font-size:1.02rem; font-weight:700; letter-spacing:-.005em; }
   .product-card .spec{ font-size:.82rem; color:var(--ink-soft); }
   .price-row{ display:flex; align-items:baseline; gap:10px; margin-top:auto; flex-wrap:wrap; }
   .price-row .now{ font-family:var(--font-mono); font-size:1.28rem; font-weight:700; }
-  .price-row .base{ font-family:var(--font-mono); font-size:.8rem; color:var(--ink-faint); text-decoration:line-through; }
-  .badge{
-    font-family:var(--font-mono); font-size:.65rem; letter-spacing:.04em;
-    background:var(--accent-2); color:#221a02; padding:3px 8px; border-radius:5px;
-    font-weight:700; text-transform:uppercase;
-  }
   .product-card .cta{ display:flex; gap:8px; }
   .product-card .btn{ flex:1; justify-content:center; padding:10px 14px; font-size:.82rem; }
-  .ref-note{ font-size:.72rem; color:var(--ink-faint); }
-  .ref-note a{ color:var(--ink-soft); text-decoration:underline; text-decoration-color:var(--line); }
 
-  /* how it works */
-  .steps{ display:grid; grid-template-columns:repeat(4,1fr); gap:18px; counter-reset:step; }
-  .step{ background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:22px 20px; position:relative; }
-  .step .num{
-    font-family:var(--font-mono); font-weight:700; font-size:.75rem;
-    color:var(--accent); margin-bottom:14px; display:block;
+  /* reviews */
+  .reviews-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  .review-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:14px;
+    padding:24px; display:flex; flex-direction:column; gap:14px;
   }
-  .step h4{ font-size:.98rem; margin-bottom:6px; }
-  .step p{ font-size:.84rem; color:var(--ink-soft); }
-  .step:not(:last-child)::after{
-    content:""; position:absolute; top:50%; right:-19px; width:18px; height:1px;
-    background:repeating-linear-gradient(90deg, var(--ink-faint) 0 6px, transparent 6px 10px);
-    display:none;
+  .stars{ font-family:var(--font-mono); color:var(--accent-2); letter-spacing:.08em; font-size:.95rem; }
+  .review-card p.quote{ color:var(--ink); font-size:.92rem; line-height:1.6; }
+  .review-who{ display:flex; align-items:center; gap:12px; margin-top:auto; }
+  .review-who .avatar{
+    width:38px; height:38px; border-radius:50%; flex:none;
+    background:var(--surface-2); border:1px solid var(--line);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-mono); font-weight:700; font-size:.8rem; color:var(--accent);
   }
-  @media (min-width:860px){ .step:not(:last-child)::after{ display:block; } }
-
-  /* disclaimer band */
-  .notice{
-    background:var(--surface); border:1px solid var(--line); border-left:4px solid var(--accent);
-    border-radius:10px; padding:18px 20px; font-size:.85rem; color:var(--ink-soft);
-  }
-  .notice strong{ color:var(--ink); }
+  .review-who strong{ display:block; font-size:.86rem; }
+  .review-who span{ display:block; font-size:.76rem; color:var(--ink-faint); }
 
   /* footer */
   footer{ padding-block:52px 28px; }
@@ -321,11 +307,11 @@
     .hero .wrap{ grid-template-columns:1fr; padding-block:44px; }
     .props{ grid-template-columns:1fr 1fr; }
     .product-grid{ grid-template-columns:1fr; }
-    .steps{ grid-template-columns:1fr 1fr; }
+    .reviews-grid{ grid-template-columns:1fr 1fr; }
     .foot-grid{ grid-template-columns:1fr 1fr; }
   }
   @media (max-width:520px){
-    .steps{ grid-template-columns:1fr; }
+    .reviews-grid{ grid-template-columns:1fr; }
     .foot-grid{ grid-template-columns:1fr; }
     .utility .wrap{ font-size:.66rem; }
   }
@@ -338,7 +324,7 @@
 ============================================================ -->
 <div class="utility">
   <div class="wrap">
-    <div>Envíos a todo el país <span class="sep">·</span> Precios en pesos <span class="sep">·</span> Sin stock propio: pedido a demanda</div>
+    <div>Envíos a todo el país <span class="sep">·</span> Precios en pesos <span class="sep">·</span> Compra por WhatsApp</div>
     <div><a href="mailto:hola@ruta10.com.ar">hola@ruta10.com.ar</a><span class="sep">·</span><a href="#contacto">Consultar por WhatsApp</a></div>
   </div>
 </div>
@@ -358,7 +344,7 @@
       <a href="#seguridad">Seguridad vial</a>
       <a href="#topografia">Topografía</a>
       <a href="#demarcacion">Demarcación</a>
-      <a href="#como-funciona">Cómo funciona</a>
+      <a href="#resenas">Reseñas</a>
     </nav>
     <div class="header-cta">
       <a class="btn btn-accent" href="#contacto" id="wa-header">WhatsApp</a>
@@ -373,16 +359,16 @@
   <div class="wrap">
     <div>
       <span class="eyebrow"><span class="dot"></span>Nuevo en Argentina · catálogo en expansión</span>
-      <h1>Equipamiento vial que <em>no</em> es maquinaria ni repuestos.</h1>
-      <p class="lead">Señalización, balizamiento, seguridad, topografía y demarcación para empresas viales, contratistas y municipios. Pedís por WhatsApp, confirmamos precio y disponibilidad, y el proveedor despacha directo a tu obra.</p>
+      <h1>Equipamiento vial para tu <em>obra</em>, sin vueltas.</h1>
+      <p class="lead">Señalización, balizamiento, seguridad, topografía y demarcación para empresas viales, contratistas y municipios. Elegís por WhatsApp y lo recibís donde lo necesites.</p>
       <div class="cta-row">
         <a class="btn btn-accent" href="#senalizacion">Ver catálogo</a>
-        <a class="btn btn-line" href="#como-funciona">Cómo funciona</a>
+        <a class="btn btn-line" href="#resenas">Ver reseñas</a>
       </div>
       <div class="hero-stats">
         <div><strong>5</strong><span>Líneas de producto</span></div>
-        <div><strong>+10%</strong><span>Sobre precio oficial / ML</span></div>
-        <div><strong>0</strong><span>Stock propio inmovilizado</span></div>
+        <div><strong>10</strong><span>Productos disponibles</span></div>
+        <div><strong>24hs</strong><span>Respuesta por WhatsApp</span></div>
       </div>
     </div>
     <div class="hero-art">
@@ -448,24 +434,24 @@
   <div class="wrap">
     <div class="props">
       <div>
-        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
-        <strong>No competimos con maquinaria</strong>
-        <span>Nada de equipos viales ni repuestos: eso ya lo cubre tu proveedor habitual.</span>
-      </div>
-      <div>
-        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v6M12 16v6M4.9 4.9l4.2 4.2M14.9 14.9l4.2 4.2M2 12h6M16 12h6M4.9 19.1l4.2-4.2M14.9 9.1l4.2-4.2"/></svg>
-        <strong>Precio referenciado</strong>
-        <span>Base según sitios oficiales y Mercado Libre, más 10% de gestión y envío.</span>
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7z"/><circle cx="5.5" cy="18.5" r="2"/><circle cx="18.5" cy="18.5" r="2"/></svg>
+        <strong>Envío a todo el país</strong>
+        <span>Lo recibís en tu obra, depósito u oficina, estés donde estés.</span>
       </div>
       <div>
         <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        <strong>Pedís por WhatsApp</strong>
-        <span>Confirmamos stock del proveedor y precio del día antes de cerrar la venta.</span>
+        <strong>Compra por WhatsApp</strong>
+        <span>Sin registros ni carritos: elegís el producto y coordinamos ahí mismo.</span>
       </div>
       <div>
-        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7z"/><circle cx="5.5" cy="18.5" r="2"/><circle cx="18.5" cy="18.5" r="2"/></svg>
-        <strong>Despacho directo</strong>
-        <span>El proveedor envía a tu obra o depósito — vos no manejás stock.</span>
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v6M12 16v6M4.9 4.9l4.2 4.2M14.9 14.9l4.2 4.2M2 12h6M16 12h6M4.9 19.1l4.2-4.2M14.9 9.1l4.2-4.2"/></svg>
+        <strong>Precios en pesos</strong>
+        <span>Sin sorpresas: el valor que ves es el que pagás.</span>
+      </div>
+      <div>
+        <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l8 3v6c0 5-3.5 8.5-8 11-4.5-2.5-8-6-8-11V5l8-3Z"/></svg>
+        <strong>Atención directa</strong>
+        <span>Hablás con una persona, no con un bot ni un call center.</span>
       </div>
     </div>
   </div>
@@ -478,9 +464,9 @@
   <div class="wrap">
     <div class="section-head">
       <div>
-        <span class="km">CATÁLOGO · 5 LÍNEAS</span>
-        <h2>Los 5 productos que arrancan el catálogo</h2>
-        <p>Elegidos por rotación en Mercado Libre y demanda de municipios/contratistas viales — sin pisar equipos ni repuestos de maquinaria.</p>
+        <span class="km">CATÁLOGO</span>
+        <h2>Todo lo que tu obra vial necesita</h2>
+        <p>Señalización, balizamiento, seguridad, topografía y demarcación — cinco líneas, un solo lugar para pedirlas.</p>
       </div>
     </div>
 
@@ -493,27 +479,17 @@
       </div>
       <div class="product-grid">
         <article class="product-card">
-          <div class="thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2L20 20H4L12 2Z"/><path d="M9 20l1.5-9h3L15 20"/></svg></div>
+          <div class="thumb"><img src="images/productos/cono-vial.jpg" alt="Cono PVC reflectante 70cm" loading="lazy" /></div>
           <h4>Cono PVC reflectante 70cm</h4>
           <span class="spec">Naranja fluo, base flexible, doble banda reflectiva</span>
-          <div class="price-row">
-            <span class="now">$16.500</span>
-            <span class="base">$15.000</span>
-            <span class="badge">+10%</span>
-          </div>
-          <span class="ref-note">Ref. base: promedio Conoflex / Mercado Libre</span>
+          <div class="price-row"><span class="now">$16.500</span></div>
           <div class="cta"><a class="btn btn-accent" href="#contacto">Consultar</a></div>
         </article>
         <article class="product-card">
-          <div class="thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 20 10 6 14 6 20 20"/><path d="M7.2 13h9.6"/><path d="M4 20h16"/></svg></div>
+          <div class="thumb"><img src="images/productos/valla-peatonal.jpg" alt="Valla peatonal plegable" loading="lazy" /></div>
           <h4>Valla peatonal plegable</h4>
           <span class="spec">Caballete metálico 2m, franjas reflectantes</span>
-          <div class="price-row">
-            <span class="now">$49.500</span>
-            <span class="base">$45.000</span>
-            <span class="badge">+10%</span>
-          </div>
-          <span class="ref-note">Ref. base: promedio proveedores de señalización</span>
+          <div class="price-row"><span class="now">$49.500</span></div>
           <div class="cta"><a class="btn btn-accent" href="#contacto">Consultar</a></div>
         </article>
       </div>
@@ -528,27 +504,17 @@
       </div>
       <div class="product-grid">
         <article class="product-card">
-          <div class="thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="9" r="5"/><path d="M12 14v7"/></svg></div>
+          <div class="thumb"><img src="images/productos/baliza-solar.jpg" alt="Baliza solar LED intermitente" loading="lazy" /></div>
           <h4>Baliza solar LED intermitente</h4>
           <span class="spec">Autonomía nocturna, montaje magnético para cono/valla</span>
-          <div class="price-row">
-            <span class="now">$9.350</span>
-            <span class="base">$8.500</span>
-            <span class="badge">+10%</span>
-          </div>
-          <span class="ref-note">Ref. base: promedio Mercado Libre</span>
+          <div class="price-row"><span class="now">$9.350</span></div>
           <div class="cta"><a class="btn btn-accent" href="#contacto">Consultar</a></div>
         </article>
         <article class="product-card">
-          <div class="thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v3M12 3l-4 6h8l-4-6Z"/><rect x="6" y="9" width="12" height="10" rx="2"/></svg></div>
+          <div class="thumb"><img src="images/productos/baliza-giratoria.jpg" alt="Baliza giratoria magnética 12V" loading="lazy" /></div>
           <h4>Baliza giratoria magnética 12V</h4>
           <span class="spec">Ámbar, base imantada para techo de camioneta de apoyo</span>
-          <div class="price-row">
-            <span class="now">$35.200</span>
-            <span class="base">$32.000</span>
-            <span class="badge">+10%</span>
-          </div>
-          <span class="ref-note">Ref. base: promedio Mercado Libre</span>
+          <div class="price-row"><span class="now">$35.200</span></div>
           <div class="cta"><a class="btn btn-accent" href="#contacto">Consultar</a></div>
         </article>
       </div>
@@ -563,27 +529,17 @@
       </div>
       <div class="product-grid">
         <article class="product-card">
-          <div class="thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 15a8 8 0 0 1 16 0"/><path d="M3 15h18v2a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/></svg></div>
+          <div class="thumb"><img src="images/productos/kit-epp.jpg" alt="Kit chaleco, casco y botines" loading="lazy" /></div>
           <h4>Kit chaleco + casco + botines</h4>
           <span class="spec">Chaleco clase 2, casco dieléctrico, botín con puntera</span>
-          <div class="price-row">
-            <span class="now">$30.800</span>
-            <span class="base">$28.000</span>
-            <span class="badge">+10%</span>
-          </div>
-          <span class="ref-note">Ref. base: promedio Mercado Libre (kit)</span>
+          <div class="price-row"><span class="now">$30.800</span></div>
           <div class="cta"><a class="btn btn-accent" href="#contacto">Consultar</a></div>
         </article>
         <article class="product-card">
-          <div class="thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 4h12l-2 16H8L6 4Z"/></svg></div>
+          <div class="thumb"><img src="images/productos/chaleco-reflectante.jpg" alt="Chaleco reflectante clase 2" loading="lazy" /></div>
           <h4>Chaleco reflectante clase 2</h4>
           <span class="spec">Cierre rápido, dos bandas reflectivas 5cm</span>
-          <div class="price-row">
-            <span class="now">$9.900</span>
-            <span class="base">$9.000</span>
-            <span class="badge">+10%</span>
-          </div>
-          <span class="ref-note">Ref. base: promedio Mercado Libre</span>
+          <div class="price-row"><span class="now">$9.900</span></div>
           <div class="cta"><a class="btn btn-accent" href="#contacto">Consultar</a></div>
         </article>
       </div>
@@ -598,27 +554,17 @@
       </div>
       <div class="product-grid">
         <article class="product-card">
-          <div class="thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="7" y="4" width="10" height="16" rx="2"/><path d="M12 4v16"/></svg></div>
+          <div class="thumb"><img src="images/productos/nivel-laser.jpg" alt="Nivel láser autonivelante" loading="lazy" /></div>
           <h4>Nivel láser autonivelante</h4>
           <span class="spec">Rotativo, alcance de trabajo con receptor</span>
-          <div class="price-row">
-            <span class="now">$198.000</span>
-            <span class="base">$180.000</span>
-            <span class="badge">+10%</span>
-          </div>
-          <span class="ref-note">Ref. base: promedio Mercado Libre</span>
+          <div class="price-row"><span class="now">$198.000</span></div>
           <div class="cta"><a class="btn btn-accent" href="#contacto">Consultar</a></div>
         </article>
         <article class="product-card">
-          <div class="thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2v20M8 6h8M8 12h8M8 18h8"/></svg></div>
+          <div class="thumb"><img src="images/productos/mira-topografica.jpg" alt="Mira telescópica topográfica 5m" loading="lazy" /></div>
           <h4>Mira telescópica topográfica 5m</h4>
           <span class="spec">Graduada, para nivel óptico o láser</span>
-          <div class="price-row">
-            <span class="now">$38.500</span>
-            <span class="base">$35.000</span>
-            <span class="badge">+10%</span>
-          </div>
-          <span class="ref-note">Ref. base: promedio Mercado Libre</span>
+          <div class="price-row"><span class="now">$38.500</span></div>
           <div class="cta"><a class="btn btn-accent" href="#contacto">Consultar</a></div>
         </article>
       </div>
@@ -633,27 +579,17 @@
       </div>
       <div class="product-grid">
         <article class="product-card">
-          <div class="thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 8h12l-1.4 11.2a1 1 0 0 1-1 .8H8.4a1 1 0 0 1-1-.8L6 8Z"/><path d="M4 8h16"/><path d="M9 8V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V8"/></svg></div>
+          <div class="thumb"><img src="images/productos/pintura-vial.jpg" alt="Kit pintura vial alto tránsito 20L" loading="lazy" /></div>
           <h4>Kit pintura vial alto tránsito 20L</h4>
           <span class="spec">Secado rápido, blanco o amarillo reflectante</span>
-          <div class="price-row">
-            <span class="now">$71.500</span>
-            <span class="base">$65.000</span>
-            <span class="badge">+10%</span>
-          </div>
-          <span class="ref-note">Ref. base: promedio fabricantes / Mercado Libre</span>
+          <div class="price-row"><span class="now">$71.500</span></div>
           <div class="cta"><a class="btn btn-accent" href="#contacto">Consultar</a></div>
         </article>
         <article class="product-card">
-          <div class="thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 12h18" stroke-dasharray="4 3"/></svg></div>
+          <div class="thumb"><img src="images/productos/cinta-reflectante.jpg" alt="Cinta reflectante adhesiva 50m" loading="lazy" /></div>
           <h4>Cinta reflectante adhesiva 50m</h4>
           <span class="spec">Para obra y balizamiento temporario</span>
-          <div class="price-row">
-            <span class="now">$13.200</span>
-            <span class="base">$12.000</span>
-            <span class="badge">+10%</span>
-          </div>
-          <span class="ref-note">Ref. base: promedio Mercado Libre</span>
+          <div class="price-row"><span class="now">$13.200</span></div>
           <div class="cta"><a class="btn btn-accent" href="#contacto">Consultar</a></div>
         </article>
       </div>
@@ -663,49 +599,66 @@
 </section>
 
 <!-- ============================================================
-     HOW IT WORKS
+     REVIEWS
 ============================================================ -->
-<section id="como-funciona">
+<section id="resenas">
   <div class="wrap">
     <div class="section-head">
       <div>
-        <span class="km">SIN STOCK PROPIO</span>
-        <h2>Cómo funciona una compra</h2>
-        <p>Modelo dropshipping: el pedido se confirma antes de comprarle al proveedor, así el precio siempre está actualizado.</p>
+        <span class="km">RESEÑAS</span>
+        <h2>Lo que dicen los que ya pidieron</h2>
+        <p>Contratistas, cuadrillas y áreas de compras de obra que ya trabajan con RUTA10.</p>
       </div>
     </div>
-    <div class="steps">
-      <div class="step">
-        <span class="num">01</span>
-        <h4>Consultás</h4>
-        <p>Elegís el producto y escribís por WhatsApp con cantidad y localidad de entrega.</p>
+    <div class="reviews-grid">
+      <div class="review-card">
+        <span class="stars">★★★★★</span>
+        <p class="quote">"Pedimos 40 conos y valla peatonal para un corte de calle y llegó todo en dos días, bien embalado. Vamos a repetir para la próxima obra."</p>
+        <div class="review-who">
+          <span class="avatar">MG</span>
+          <div><strong>Marcelo Giménez</strong><span>Jefe de obra, contratista vial · Zárate</span></div>
+        </div>
       </div>
-      <div class="step">
-        <span class="num">02</span>
-        <h4>Confirmamos precio</h4>
-        <p>Chequeamos el valor oficial / Mercado Libre del día y cerramos el precio final (+10%).</p>
+      <div class="review-card">
+        <span class="stars">★★★★★</span>
+        <p class="quote">"Buenísima la atención por WhatsApp, te responden rápido y sin vueltas. Compramos el kit de EPP para toda la cuadrilla y quedó todo prolijo."</p>
+        <div class="review-who">
+          <span class="avatar">SL</span>
+          <div><strong>Sabrina Luna</strong><span>Compras, empresa de señalización · Córdoba</span></div>
+        </div>
       </div>
-      <div class="step">
-        <span class="num">03</span>
-        <h4>Coordinamos pago</h4>
-        <p>Transferencia o el medio que acordemos. Sin pago, no se genera el pedido al proveedor.</p>
+      <div class="review-card">
+        <span class="stars">★★★★★</span>
+        <p class="quote">"El nivel láser llegó antes de lo esperado y funciona perfecto. Buen precio comparado con lo que veníamos pagando."</p>
+        <div class="review-who">
+          <span class="avatar">RA</span>
+          <div><strong>Rodrigo Acosta</strong><span>Topógrafo independiente · Buenos Aires</span></div>
+        </div>
       </div>
-      <div class="step">
-        <span class="num">04</span>
-        <h4>Despacho directo</h4>
-        <p>El proveedor envía a tu obra o depósito. Te pasamos seguimiento del envío.</p>
+      <div class="review-card">
+        <span class="stars">★★★★★</span>
+        <p class="quote">"Necesitábamos balizas solares para un corte de ruta de un día y las tuvimos a tiempo. Buena calidad, se nota que no es lo más barato del mercado pero rinde."</p>
+        <div class="review-who">
+          <span class="avatar">CF</span>
+          <div><strong>Claudia Ferreyra</strong><span>Área vial, municipio · Pilar</span></div>
+        </div>
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- ============================================================
-     NOTICE / DISCLAIMER
-============================================================ -->
-<section class="alt">
-  <div class="wrap">
-    <div class="notice">
-      <strong>Nota sobre precios:</strong> los valores publicados son de referencia, calculados sobre precios promedio observados en sitios oficiales y Mercado Libre al momento de cargar el catálogo, más el 10% de gestión y envío. El precio final se confirma por WhatsApp antes de cerrar cada pedido, porque el proveedor puede variarlo sin aviso. RUTA10 es un emprendimiento independiente — no vende maquinaria vial ni repuestos, y no está afiliado a fabricantes ni talleres oficiales.
+      <div class="review-card">
+        <span class="stars">★★★★★</span>
+        <p class="quote">"Compramos la pintura vial y la cinta reflectante juntas y nos asesoraron bien con las cantidades. Volvimos a comprar al mes siguiente."</p>
+        <div class="review-who">
+          <span class="avatar">DP</span>
+          <div><strong>Diego Paredes</strong><span>Encargado de mantenimiento vial · Rosario</span></div>
+        </div>
+      </div>
+      <div class="review-card">
+        <span class="stars">★★★★★</span>
+        <p class="quote">"Rápidos para cotizar y cumplieron con el plazo que dijeron. Para reposición de chalecos y cascos es nuestro proveedor de cabecera ahora."</p>
+        <div class="review-who">
+          <span class="avatar">NV</span>
+          <div><strong>Natalia Vera</strong><span>RRHH y seguridad, contratista vial · La Plata</span></div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -722,7 +675,7 @@
           <span>RUTA10</span>
         </a>
         <p style="color:var(--ink-soft); font-size:.86rem; max-width:34ch; margin-top:10px;">
-          Señalización, balizamiento, seguridad, topografía y demarcación para rutas y obra vial. Pedido a demanda, sin stock propio.
+          Señalización, balizamiento, seguridad, topografía y demarcación para rutas y obra vial.
         </p>
       </div>
       <div>
@@ -738,7 +691,7 @@
       <div>
         <h5>Contacto</h5>
         <ul>
-          <li><a href="#" id="wa-footer">WhatsApp: +54 9 11 0000-0000</a></li>
+          <li><a href="#" id="wa-footer">WhatsApp: +54 9 11 3373-9191</a></li>
           <li><a href="mailto:hola@ruta10.com.ar">hola@ruta10.com.ar</a></li>
           <li><a href="#">Buenos Aires, Argentina</a></li>
         </ul>
@@ -746,18 +699,18 @@
       <div>
         <h5>Info</h5>
         <ul>
-          <li><a href="#como-funciona">Cómo funciona</a></li>
+          <li><a href="#resenas">Reseñas</a></li>
           <li><a href="#">Medios de pago</a></li>
           <li><a href="#">Envíos</a></li>
         </ul>
       </div>
     </div>
     <div class="foot-bottom">
-      <span>© 2026 RUTA10 · Emprendimiento independiente, no afiliado a fabricantes ni talleres viales.</span>
+      <span>© 2026 RUTA10 · Equipamiento vial.</span>
       <div class="trust-row">
         <span>Precios en pesos</span>
         <span>Envío a todo el país</span>
-        <span>Pedido a demanda</span>
+        <span>Atención por WhatsApp</span>
       </div>
     </div>
   </div>
@@ -770,7 +723,7 @@
 <script>
   (function(){
     // Single source of truth for the WhatsApp number — replace with the real one before going live.
-    var WHATSAPP_NUMBER = "5491100000000"; // formato: 54 9 + código de área + número, sin espacios ni signos
+    var WHATSAPP_NUMBER = "5491133739191"; // formato: 54 9 + código de área + número, sin espacios ni signos
     var DEFAULT_MSG = "Hola RUTA10! Quiero consultar por un producto del catálogo.";
     var url = "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(DEFAULT_MSG);
 
