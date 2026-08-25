@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Extractor de Facturas a Excel</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main class="contenedor">
+    <header>
+      <h1>📄 Extractor de Facturas</h1>
+      <p class="subtitulo">
+        Subí facturas de distintos proveedores en <strong>PDF, JPG, PNG</strong> u otros
+        formatos de imagen y generá un Excel con los datos extraídos automáticamente.
+      </p>
+    </header>
+
+    <form id="form-facturas">
+      <div id="zona-drop" class="zona-drop">
+        <p class="zona-drop-texto">Arrastrá tus facturas acá, o hacé clic para elegirlas</p>
+        <p class="zona-drop-formatos">Formatos aceptados: {{ extensiones | join(', ') }}</p>
+        <input type="file" id="input-archivos" name="facturas" multiple
+               accept=".pdf,.jpg,.jpeg,.png,.bmp,.tif,.tiff,.webp">
+      </div>
+
+      <ul id="lista-archivos" class="lista-archivos"></ul>
+
+      <button type="submit" id="btn-procesar" class="boton-principal" disabled>
+        Extraer datos y generar Excel
+      </button>
+    </form>
+
+    <div id="estado-proceso" class="estado-proceso" hidden>
+      <div class="spinner"></div>
+      <p id="estado-texto">Procesando facturas…</p>
+    </div>
+
+    <div id="mensaje-error" class="mensaje-error" hidden></div>
+
+    <footer>
+      <p>
+        La extracción usa OCR local (Tesseract) y reglas basadas en palabras clave
+        habituales de facturas en español. No es infalible: revisá siempre la columna
+        <strong>Estado</strong> del Excel (marca "Revisar" o "ERROR" cuando falta algún
+        dato) y la hoja <strong>"Texto OCR"</strong> para verificar contra el original.
+      </p>
+    </footer>
+  </main>
+
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
