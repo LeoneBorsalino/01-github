@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-slate-50 text-slate-900;
+  }
+  /* Evita el zoom accidental por doble-tap en tablets durante el cobro */
+  * {
+    touch-action: manipulation;
+  }
+}
+
+@layer components {
+  .btn-big {
+    @apply flex min-h-[4rem] items-center justify-center rounded-2xl px-4 py-3 text-lg font-bold
+      shadow-sm transition active:scale-[0.97] disabled:opacity-40 disabled:active:scale-100;
+  }
+  .card {
+    @apply rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: white;
+  }
+}
