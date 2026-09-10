@@ -229,6 +229,12 @@ begin
     if v_product.track_stock and v_product.stock_qty < v_qty then
       raise exception 'Stock insuficiente de "%": quedan %', v_product.name, v_product.stock_qty;
     end if;
+    -- CORTESIA (100% off) protege siempre la parte del socio de caliente:
+    -- solo se puede regalar productos del sector económico FRIO. Lo caliente
+    -- para músicos se cobra con el descuento Feriante -20%, no gratis.
+    if v_discount_percent = 100 and v_product.sector_economico = 'CALIENTE' then
+      raise exception 'Cortesía solo se puede usar con productos fríos. "%" es del sector caliente: usá el descuento Feriante para eso.', v_product.name;
+    end if;
   end loop;
 
   -- Número de pedido correlativo por evento, asignado de forma atómica.

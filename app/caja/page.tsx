@@ -100,6 +100,7 @@ export default function CajaPage() {
             <PaymentStep
               total={cart.total}
               feriante={feriante}
+              hasCalienteItem={cart.items.some((i) => i.sectorEconomico === "CALIENTE")}
               loading={charging}
               errorMessage={error}
               onBack={() => setStep("catalog")}

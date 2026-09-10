@@ -13,6 +13,7 @@ const METHODS: { value: PaymentMethod; label: string; emoji: string }[] = [
 export function PaymentStep({
   total,
   feriante,
+  hasCalienteItem,
   loading,
   errorMessage,
   onBack,
@@ -21,6 +22,8 @@ export function PaymentStep({
   /** Total del carrito SIN descuento (el feriante ya se muestra aparte). */
   total: number;
   feriante: boolean;
+  /** Cortesía (100%) solo se puede usar si el pedido no tiene nada caliente. */
+  hasCalienteItem: boolean;
   loading: boolean;
   errorMessage: string | null;
   onBack: () => void;
@@ -49,21 +52,32 @@ export function PaymentStep({
       )}
 
       <div className="grid w-full max-w-md grid-cols-1 gap-3 sm:grid-cols-2">
-        {METHODS.map((m) => (
-          <button
-            key={m.value}
-            onClick={() => setMethod(m.value)}
-            className={`btn-big flex-col gap-1 py-6 text-lg ${
-              method === m.value
-                ? "bg-organizador text-white ring-4 ring-organizador-dark"
-                : "bg-white ring-1 ring-slate-200 text-slate-700"
-            }`}
-          >
-            <span className="text-3xl">{m.emoji}</span>
-            {m.label}
-          </button>
-        ))}
+        {METHODS.map((m) => {
+          const disabled = m.value === "CORTESIA" && hasCalienteItem;
+          return (
+            <button
+              key={m.value}
+              onClick={() => !disabled && setMethod(m.value)}
+              disabled={disabled}
+              title={disabled ? "Cortesía es solo para pedidos 100% fríos" : undefined}
+              className={`btn-big flex-col gap-1 py-6 text-lg ${
+                method === m.value
+                  ? "bg-organizador text-white ring-4 ring-organizador-dark"
+                  : "bg-white ring-1 ring-slate-200 text-slate-700"
+              }`}
+            >
+              <span className="text-3xl">{m.emoji}</span>
+              {m.label}
+            </button>
+          );
+        })}
       </div>
+      {hasCalienteItem && (
+        <p className="-mt-2 max-w-md text-center text-sm text-slate-500">
+          🎁 Cortesía está deshabilitada porque el pedido tiene productos calientes — usá el
+          descuento Feriante para esos.
+        </p>
+      )}
 
       {errorMessage && (
         <p className="max-w-md text-center font-semibold text-peligro">{errorMessage}</p>
