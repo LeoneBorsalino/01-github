@@ -48,7 +48,14 @@ export default function AdminMonitorPage() {
               const general = generalOrderStatus(order);
               return (
                 <tr key={order.id} className="border-t border-slate-100">
-                  <td className="px-3 py-2 font-bold">#{String(order.order_number).padStart(3, "0")}</td>
+                  <td className="px-3 py-2 font-bold">
+                    #{String(order.order_number).padStart(3, "0")}
+                    {order.discount_label && (
+                      <span className="ml-2 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-700">
+                        {order.discount_label}
+                      </span>
+                    )}
+                  </td>
                   <td className="px-3 py-2 text-slate-500">
                     {new Date(order.charged_at).toLocaleTimeString("es-AR", {
                       hour: "2-digit",

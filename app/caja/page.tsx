@@ -19,6 +19,7 @@ export default function CajaPage() {
   const cart = useCart(activeEvent?.id);
 
   const [step, setStep] = useState<Step>("catalog");
+  const [feriante, setFeriante] = useState(false);
   const [charging, setCharging] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lastOrder, setLastOrder] = useState<OrderRow | null>(null);
@@ -31,10 +32,12 @@ export default function CajaPage() {
       const order = await apiPost<OrderRow>("/api/orders/charge", {
         eventId: activeEvent.id,
         paymentMethod: method,
+        feriante,
         items: cart.items.map((i) => ({ productId: i.productId, quantity: i.quantity })),
       });
       setLastOrder(order);
       cart.clear();
+      setFeriante(false);
       setStep("success");
     } catch (e) {
       setError(e instanceof ApiError ? e.message : "No se pudo confirmar el cobro");
@@ -75,10 +78,15 @@ export default function CajaPage() {
             <CartPanel
               items={cart.items}
               total={cart.total}
+              feriante={feriante}
+              onToggleFeriante={() => setFeriante((f) => !f)}
               onIncrement={cart.increment}
               onDecrement={cart.decrement}
               onRemove={cart.removeItem}
-              onClear={cart.clear}
+              onClear={() => {
+                cart.clear();
+                setFeriante(false);
+              }}
               onCheckout={() => {
                 setError(null);
                 setStep("payment");
@@ -91,6 +99,7 @@ export default function CajaPage() {
           <div className="col-span-full overflow-y-auto">
             <PaymentStep
               total={cart.total}
+              feriante={feriante}
               loading={charging}
               errorMessage={error}
               onBack={() => setStep("catalog")}
@@ -104,6 +113,7 @@ export default function CajaPage() {
             <OrderSuccess
               orderNumber={lastOrder.order_number}
               total={lastOrder.total}
+              discountLabel={lastOrder.discount_label}
               onNewOrder={() => setStep("catalog")}
             />
           </div>

@@ -36,6 +36,9 @@ export interface ClosingResult {
   totalOrganizador: number;
   totalFacturado: number;
   totalByPayment: PaymentBreakdown;
+  /** Pedidos con medio de pago CORTESIA: regalos a staff/músicos, aparte de
+   *  las ventas reales, para poder reconciliarlos con el festival. */
+  cortesia: { quantityTotal: number; byProduct: ProductSummary[] };
   ordersCount: number;
   voidedCount: number;
   consistency: {
@@ -46,7 +49,7 @@ export interface ClosingResult {
 }
 
 function emptyPayment(): PaymentBreakdown {
-  return { EFECTIVO: 0, TRANSFERENCIA: 0, DEBITO: 0 };
+  return { EFECTIVO: 0, TRANSFERENCIA: 0, DEBITO: 0, CORTESIA: 0 };
 }
 
 function round2(n: number) {
@@ -80,6 +83,8 @@ export function computeClosing(orders: OrderLike[], items: ItemLike[]): ClosingR
     FRIO: new Map(),
     CALIENTE: new Map(),
   };
+  const cortesiaMap = new Map<string, ProductSummary>();
+  let cortesiaQuantityTotal = 0;
 
   let sumItems = 0;
 
@@ -87,12 +92,30 @@ export function computeClosing(orders: OrderLike[], items: ItemLike[]): ClosingR
     if (!paidOrderIds.has(item.order_id)) continue; // pedido anulado (o huérfano): fuera del cierre
     const paymentMethod = paymentByOrder.get(item.order_id);
     if (!paymentMethod) continue;
+    sumItems = round2(sumItems + item.subtotal);
+
+    if (paymentMethod === "CORTESIA") {
+      // Regalo a staff/músicos: no cuenta como venta real, se muestra aparte.
+      cortesiaQuantityTotal += item.quantity;
+      const existingGift = cortesiaMap.get(item.product_name);
+      if (existingGift) {
+        existingGift.quantity += item.quantity;
+      } else {
+        cortesiaMap.set(item.product_name, {
+          productName: item.product_name,
+          category: item.category,
+          sectorEconomico: item.sector_economico,
+          quantity: item.quantity,
+          subtotal: 0,
+        });
+      }
+      continue;
+    }
 
     const sector = sectors[item.sector_economico];
     sector.quantityTotal += item.quantity;
     sector.revenue = round2(sector.revenue + item.subtotal);
     sector.byPayment[paymentMethod] = round2(sector.byPayment[paymentMethod] + item.subtotal);
-    sumItems = round2(sumItems + item.subtotal);
 
     const map = productMaps[item.sector_economico];
     const existing = map.get(item.product_name);
@@ -126,11 +149,15 @@ export function computeClosing(orders: OrderLike[], items: ItemLike[]): ClosingR
       sectors.FRIO.byPayment.TRANSFERENCIA + sectors.CALIENTE.byPayment.TRANSFERENCIA
     ),
     DEBITO: round2(sectors.FRIO.byPayment.DEBITO + sectors.CALIENTE.byPayment.DEBITO),
+    CORTESIA: round2(sectors.FRIO.byPayment.CORTESIA + sectors.CALIENTE.byPayment.CORTESIA),
   };
 
   const sumOrdersTotal = round2(paidOrders.reduce((acc, o) => acc + Number(o.total), 0));
   const sumPayments = round2(
-    totalByPayment.EFECTIVO + totalByPayment.TRANSFERENCIA + totalByPayment.DEBITO
+    totalByPayment.EFECTIVO +
+      totalByPayment.TRANSFERENCIA +
+      totalByPayment.DEBITO +
+      totalByPayment.CORTESIA
   );
   const diffItemsOrders = round2(Math.abs(sumItems - sumOrdersTotal));
   const diffPaymentsTotal = round2(Math.abs(sumPayments - totalFacturado));
@@ -138,6 +165,10 @@ export function computeClosing(orders: OrderLike[], items: ItemLike[]): ClosingR
   return {
     frio: sectors.FRIO,
     caliente: sectors.CALIENTE,
+    cortesia: {
+      quantityTotal: cortesiaQuantityTotal,
+      byProduct: [...cortesiaMap.values()].sort((a, b) => b.quantity - a.quantity),
+    },
     calienteSocio70,
     calienteOrganizador30,
     totalOrganizador,

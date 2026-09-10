@@ -11,7 +11,10 @@ export type OrderStatus = "COBRADO" | "ANULADO";
 
 export type PrepStatus = "PENDIENTE" | "EN_PREPARACION" | "LISTO";
 
-export type PaymentMethod = "EFECTIVO" | "TRANSFERENCIA" | "DEBITO";
+export type PaymentMethod = "EFECTIVO" | "TRANSFERENCIA" | "DEBITO" | "CORTESIA";
+
+/** Descuento aplicable a todo el pedido, elegido en Caja antes de cobrar. */
+export type DiscountKind = "NINGUNO" | "FERIANTE";
 
 /** Estado general derivado de un pedido (nunca se almacena, ver lib/orderStatus.ts) */
 export type GeneralOrderStatus =
@@ -56,6 +59,7 @@ export interface OrderRow {
   status: OrderStatus;
   payment_method: PaymentMethod;
   total: number;
+  discount_label: string | null;
   created_by: string | null;
   created_by_name: string | null;
   charged_at: string;

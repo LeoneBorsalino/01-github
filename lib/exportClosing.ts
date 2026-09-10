@@ -57,6 +57,17 @@ export function buildClosingCsv(event: EventRow, closing: ClosingResult): string
   lines.push(csvRow(["Débito/POSnet", closing.totalByPayment.DEBITO]));
   lines.push(csvRow(["TOTAL FACTURADO", closing.totalFacturado]));
   lines.push("");
+
+  if (closing.cortesia.quantityTotal > 0) {
+    lines.push(csvRow(["CORTESÍAS (staff/músicos, regalado a $0, aparte de la facturación)"]));
+    lines.push(csvRow(["Producto", "Cantidad"]));
+    for (const p of closing.cortesia.byProduct) {
+      lines.push(csvRow([p.productName, p.quantity]));
+    }
+    lines.push(csvRow(["TOTAL UNIDADES REGALADAS", closing.cortesia.quantityTotal]));
+    lines.push("");
+  }
+
   lines.push(csvRow(["Consistencia OK", closing.consistency.ok ? "SI" : "NO — REVISAR"]));
 
   return "﻿" + lines.join("\n"); // BOM para que Excel abra bien los acentos
@@ -87,7 +98,19 @@ export async function buildClosingWorkbook(event: EventRow, closing: ClosingResu
   resumen.addRow(["Débito/POSnet", closing.totalByPayment.DEBITO]);
   resumen.addRow(["TOTAL FACTURADO", closing.totalFacturado]);
   resumen.addRow([]);
+  resumen.addRow(["Cortesías regaladas (staff/músicos, a $0)", closing.cortesia.quantityTotal]);
+  resumen.addRow([]);
   resumen.addRow(["Consistencia", closing.consistency.ok ? "OK" : "REVISAR — hay diferencias"]);
+
+  if (closing.cortesia.quantityTotal > 0) {
+    const cortesiaSheet = wb.addWorksheet("Cortesías");
+    cortesiaSheet.columns = [{ width: 32 }, { width: 12 }];
+    cortesiaSheet.addRow(["Producto", "Cantidad"]).font = { bold: true };
+    for (const p of closing.cortesia.byProduct) {
+      cortesiaSheet.addRow([p.productName, p.quantity]);
+    }
+    cortesiaSheet.addRow(["TOTAL", closing.cortesia.quantityTotal]).font = { bold: true };
+  }
 
   for (const [sheetName, sector] of [
     ["Productos Frío", closing.frio],

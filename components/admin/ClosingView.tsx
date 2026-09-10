@@ -116,6 +116,33 @@ export function ClosingView({ event, closing }: { event: EventRow; closing: Clos
           <Stat label="TOTAL FACTURADO" value={formatMoney(closing.totalFacturado)} />
         </div>
       </div>
+
+      {closing.cortesia.quantityTotal > 0 && (
+        <div className="card">
+          <h3 className="mb-1 text-lg font-bold text-slate-800">🎁 Cortesías — staff / músicos</h3>
+          <p className="mb-3 text-sm text-slate-500">
+            Regalado a $0, aparte de la facturación. Usá esta lista para cobrárselo al festival al
+            precio de costo que corresponda.
+          </p>
+          <Stat label="Unidades regaladas" value={String(closing.cortesia.quantityTotal)} />
+          <table className="mt-3 w-full text-left text-sm">
+            <thead className="text-xs uppercase tracking-wide text-slate-500">
+              <tr>
+                <th className="py-1">Producto</th>
+                <th className="py-1">Cant.</th>
+              </tr>
+            </thead>
+            <tbody>
+              {closing.cortesia.byProduct.map((p) => (
+                <tr key={p.productName} className="border-t border-slate-100">
+                  <td className="py-1">{p.productName}</td>
+                  <td className="py-1">{p.quantity}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }

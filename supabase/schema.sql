@@ -69,8 +69,14 @@ create table orders (
   event_id uuid not null references events(id) on delete cascade,
   order_number integer not null,
   status text not null default 'COBRADO' check (status in ('COBRADO','ANULADO')),
-  payment_method text not null check (payment_method in ('EFECTIVO','TRANSFERENCIA','DEBITO')),
+  -- CORTESIA: pedidos regalados a staff/músicos (se cobran a $0), separados
+  -- de la facturación real para poder reconciliarlos con el festival aparte.
+  payment_method text not null check (payment_method in ('EFECTIVO','TRANSFERENCIA','DEBITO','CORTESIA')),
   total numeric(12,2) not null default 0,
+  -- Etiqueta informativa del descuento aplicado (p. ej. "Feriante -20%",
+  -- "Cortesía"). No afecta ningún cálculo: el precio ya descontado queda
+  -- grabado en order_items.unit_price: esto es solo para mostrar en pantalla.
+  discount_label text,
   created_by uuid references staff(id) on delete set null,
   created_by_name text,
   charged_at timestamptz not null default now(),
@@ -148,7 +154,8 @@ create or replace function charge_order(
   p_items jsonb, -- [{ "product_id": "...", "quantity": 2 }, ...]
   p_payment_method text,
   p_staff_id uuid,
-  p_staff_name text
+  p_staff_name text,
+  p_discount_percent numeric default 0 -- 0 (normal) o 20 (feriante). Ignorado si CORTESIA.
 ) returns orders
 language plpgsql
 security definer
@@ -162,15 +169,34 @@ declare
   v_item jsonb;
   v_product products%rowtype;
   v_qty integer;
+  v_unit_price numeric(12,2);
   v_subtotal numeric(12,2);
   v_frio_present boolean := false;
   v_caliente_present boolean := false;
+  -- El descuento efectivo nunca se toma directo del cliente sin validar:
+  -- CORTESIA siempre es 100% (regalo), y el único otro descuento permitido
+  -- es el de feriante (20%). Cualquier otro valor se rechaza.
+  v_discount_percent numeric;
+  v_discount_label text;
 begin
-  if p_payment_method not in ('EFECTIVO','TRANSFERENCIA','DEBITO') then
+  if p_payment_method not in ('EFECTIVO','TRANSFERENCIA','DEBITO','CORTESIA') then
     raise exception 'Medio de pago inválido';
   end if;
   if p_items is null or jsonb_array_length(p_items) = 0 then
     raise exception 'El pedido no tiene productos';
+  end if;
+
+  if p_payment_method = 'CORTESIA' then
+    v_discount_percent := 100;
+    v_discount_label := 'Cortesía';
+  elsif coalesce(p_discount_percent, 0) = 20 then
+    v_discount_percent := 20;
+    v_discount_label := 'Feriante -20%';
+  elsif coalesce(p_discount_percent, 0) = 0 then
+    v_discount_percent := 0;
+    v_discount_label := null;
+  else
+    raise exception 'Descuento inválido';
   end if;
 
   select * into v_event from events where id = p_event_id for update;
@@ -210,15 +236,20 @@ begin
     where id = p_event_id
     returning order_counter into v_order_number;
 
-  insert into orders (event_id, order_number, status, payment_method, total, created_by, created_by_name, charged_at)
-    values (p_event_id, v_order_number, 'COBRADO', p_payment_method, 0, p_staff_id, p_staff_name, now())
+  insert into orders (event_id, order_number, status, payment_method, total, discount_label, created_by, created_by_name, charged_at)
+    values (p_event_id, v_order_number, 'COBRADO', p_payment_method, 0, v_discount_label, p_staff_id, p_staff_name, now())
     returning * into v_order;
 
   for v_item in select * from jsonb_array_elements(p_items)
   loop
     v_qty := (v_item->>'quantity')::integer;
     select * into v_product from products where id = (v_item->>'product_id')::uuid;
-    v_subtotal := v_product.price * v_qty;
+    -- Precio con el descuento ya aplicado: éste es el precio "histórico" que
+    -- queda grabado para siempre en el pedido (sección 30), y sobre el que
+    -- se calcula después el reparto 70/30 — así el descuento queda repartido
+    -- proporcionalmente entre organizador y socio, no solo de un lado.
+    v_unit_price := round(v_product.price * (1 - v_discount_percent / 100.0), 2);
+    v_subtotal := v_unit_price * v_qty;
     v_total := v_total + v_subtotal;
 
     insert into order_items (
@@ -226,7 +257,7 @@ begin
       sector_economico, sector_preparacion, unit_price, quantity, subtotal
     ) values (
       v_order.id, v_product.id, v_product.name, v_product.category,
-      v_product.sector_economico, v_product.sector_preparacion, v_product.price, v_qty, v_subtotal
+      v_product.sector_economico, v_product.sector_preparacion, v_unit_price, v_qty, v_subtotal
     );
 
     if v_product.sector_preparacion = 'FRIO' then v_frio_present := true; end if;
@@ -357,10 +388,10 @@ end;
 $$;
 
 -- Solo el backend (service_role) puede ejecutar estas funciones.
-revoke all on function charge_order(uuid, jsonb, text, uuid, text) from public;
+revoke all on function charge_order(uuid, jsonb, text, uuid, text, numeric) from public;
 revoke all on function void_order(uuid, text, uuid, text) from public;
 revoke all on function update_order_prep_status(uuid, text, text) from public;
-grant execute on function charge_order(uuid, jsonb, text, uuid, text) to service_role;
+grant execute on function charge_order(uuid, jsonb, text, uuid, text, numeric) to service_role;
 grant execute on function void_order(uuid, text, uuid, text) to service_role;
 grant execute on function update_order_prep_status(uuid, text, text) to service_role;
 

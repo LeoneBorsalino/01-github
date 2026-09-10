@@ -7,22 +7,29 @@ const METHODS: { value: PaymentMethod; label: string; emoji: string }[] = [
   { value: "EFECTIVO", label: "EFECTIVO", emoji: "💵" },
   { value: "TRANSFERENCIA", label: "TRANSFERENCIA", emoji: "📲" },
   { value: "DEBITO", label: "DÉBITO / POSNET", emoji: "💳" },
+  { value: "CORTESIA", label: "CORTESÍA (staff/músicos)", emoji: "🎁" },
 ];
 
 export function PaymentStep({
   total,
+  feriante,
   loading,
   errorMessage,
   onBack,
   onConfirm,
 }: {
+  /** Total del carrito SIN descuento (el feriante ya se muestra aparte). */
   total: number;
+  feriante: boolean;
   loading: boolean;
   errorMessage: string | null;
   onBack: () => void;
   onConfirm: (method: PaymentMethod) => void;
 }) {
   const [method, setMethod] = useState<PaymentMethod | null>(null);
+
+  const isCortesia = method === "CORTESIA";
+  const totalToShow = isCortesia ? 0 : feriante ? Math.round(total * 0.8) : total;
 
   return (
     <div className="flex h-full flex-col items-center gap-6 p-6">
@@ -31,9 +38,17 @@ export function PaymentStep({
       </button>
 
       <p className="text-lg font-semibold text-slate-500">Total a cobrar</p>
-      <p className="text-5xl font-extrabold text-slate-900">{formatMoney(total)}</p>
+      <p className="text-5xl font-extrabold text-slate-900">{formatMoney(totalToShow)}</p>
+      {feriante && !isCortesia && (
+        <p className="-mt-4 text-sm font-semibold text-amber-600">🏷️ Con descuento feriante -20%</p>
+      )}
+      {isCortesia && (
+        <p className="-mt-4 max-w-md text-center text-sm font-semibold text-slate-500">
+          Se registra a $0 y queda separado en el cierre para cobrárselo al festival aparte.
+        </p>
+      )}
 
-      <div className="grid w-full max-w-md grid-cols-1 gap-3 sm:grid-cols-3">
+      <div className="grid w-full max-w-md grid-cols-1 gap-3 sm:grid-cols-2">
         {METHODS.map((m) => (
           <button
             key={m.value}

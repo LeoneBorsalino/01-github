@@ -5,6 +5,8 @@ import type { CartItem } from "@/lib/types";
 export function CartPanel({
   items,
   total,
+  feriante,
+  onToggleFeriante,
   onIncrement,
   onDecrement,
   onRemove,
@@ -13,12 +15,15 @@ export function CartPanel({
 }: {
   items: CartItem[];
   total: number;
+  feriante: boolean;
+  onToggleFeriante: () => void;
   onIncrement: (productId: string) => void;
   onDecrement: (productId: string) => void;
   onRemove: (productId: string) => void;
   onClear: () => void;
   onCheckout: () => void;
 }) {
+  const discountedTotal = feriante ? Math.round(total * 0.8) : total;
   return (
     <aside className="flex h-full flex-col border-slate-200 bg-white lg:border-l">
       <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
@@ -77,9 +82,27 @@ export function CartPanel({
       </div>
 
       <div className="border-t border-slate-200 p-4">
+        <button
+          onClick={onToggleFeriante}
+          disabled={items.length === 0}
+          className={`btn-big mb-3 w-full text-base ${
+            feriante
+              ? "bg-amber-500 text-white ring-2 ring-amber-600"
+              : "bg-amber-50 text-amber-700 ring-1 ring-amber-300"
+          }`}
+        >
+          🏷️ Feriante -20% {feriante ? "· aplicado" : ""}
+        </button>
         <div className="mb-3 flex items-center justify-between">
           <span className="text-lg font-bold text-slate-600">TOTAL</span>
-          <span className="text-2xl font-extrabold text-slate-900">{formatMoney(total)}</span>
+          <div className="text-right">
+            {feriante && (
+              <span className="mr-2 text-base text-slate-400 line-through">{formatMoney(total)}</span>
+            )}
+            <span className="text-2xl font-extrabold text-slate-900">
+              {formatMoney(discountedTotal)}
+            </span>
+          </div>
         </div>
         <button
           onClick={onCheckout}
