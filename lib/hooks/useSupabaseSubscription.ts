@@ -20,8 +20,16 @@ export function useSupabaseSubscription(
   useEffect(() => {
     if (!enabled) return;
     const supabase = supabaseBrowser();
+    // Nombre de canal único por cada suscriptor: si dos componentes escuchan
+    // la misma tabla (p. ej. el layout de Admin y la página de Admin, ambos
+    // usando useActiveEvent), Supabase reutiliza el canal existente si el
+    // nombre coincide, y agregar un listener a un canal ya suscripto tira
+    // "cannot add postgres_changes callbacks ... after subscribe()". Un
+    // sufijo aleatorio evita esa colisión sin costo real (cada canal es una
+    // suscripción independiente y liviana).
+    const uniqueName = `${table}-${filter ?? "all"}-${Math.random().toString(36).slice(2)}`;
     const channel = supabase
-      .channel(`${table}-${filter ?? "all"}`)
+      .channel(uniqueName)
       .on(
         "postgres_changes",
         { event: "*", schema: "public", table, ...(filter ? { filter } : {}) },
