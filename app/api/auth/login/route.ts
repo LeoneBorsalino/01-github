@@ -23,7 +23,11 @@ export async function POST(request: Request) {
     .eq("active", true);
 
   if (error) {
-    return NextResponse.json({ error: "No se pudo validar el PIN" }, { status: 500 });
+    console.error("Error de Supabase en /api/auth/login:", error);
+    return NextResponse.json(
+      { error: "No se pudo validar el PIN", detail: error.message },
+      { status: 500 }
+    );
   }
 
   for (const candidate of candidates ?? []) {
