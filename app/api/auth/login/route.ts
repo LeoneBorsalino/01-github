@@ -23,11 +23,10 @@ export async function POST(request: Request) {
     .eq("active", true);
 
   if (error) {
+    // El detalle completo queda en los logs del servidor (Vercel → Logs),
+    // nunca en la respuesta al cliente.
     console.error("Error de Supabase en /api/auth/login:", error);
-    return NextResponse.json(
-      { error: "No se pudo validar el PIN", detail: error.message },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "No se pudo validar el PIN" }, { status: 500 });
   }
 
   for (const candidate of candidates ?? []) {
