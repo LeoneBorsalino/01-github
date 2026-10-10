@@ -135,6 +135,11 @@ alter table order_items enable row level security;
 alter table stock_movements enable row level security;
 alter table staff enable row level security;
 
+-- Se otorgan los permisos de lectura explícitamente (sin depender de que el
+-- proyecto tenga tildado "Automatically expose new tables" al crearlo).
+grant usage on schema public to anon, authenticated;
+grant select on events, products, orders, order_items, stock_movements to anon, authenticated;
+
 create policy "read events" on events for select using (true);
 create policy "read products" on products for select using (true);
 create policy "read orders" on orders for select using (true);
